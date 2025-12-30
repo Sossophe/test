@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Randomiser</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    input, button {
+      padding: 8px 12px;
+      margin: 5px 0;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    #output {
+      background: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      min-height: 50px;
+    }
+
+    .group {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Student Randomiser</h1>
+
+  <p>Enter one student per line:</p>
+  <textarea id="studentsInput" placeholder="Alice&#10;Bob&#10;Charlie"></textarea>
+
+  <div class="buttons">
+    <button onclick="randomiseStudents()">Randomise List</button>
+    <button onclick="pickStudent()">Pick One Student</button>
+    <input type="number" id="groupSize" placeholder="Group size" min="1">
+    <button onclick="createGroups()">Create Groups</button>
+  </div>
+
+  <div id="output"></div>
+
+  <script>
+    function getStudents() {
+      return document
+        .getElementById("studentsInput")
+        .value
+        .split("\n")
+        .map(s => s.trim())
+        .filter(s => s !== "");
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function randomiseStudents() {
+      const students = shuffle(getStudents());
+      document.getElementById("output").innerHTML =
+        "<strong>Randomised List:</strong><br>" + students.join("<br>");
+    }
+
+    function pickStudent() {
+      const students = getStudents();
+      if (students.length === 0) return;
+      const chosen = students[Math.floor(Math.random() * students.length)];
+      document.getElementById("output").innerHTML =
+        "<strong>Selected Student:</strong><br>" + chosen;
+    }
+
+    function createGroups() {
+      const size = parseInt(document.getElementById("groupSize").value);
+      if (!size || size < 1) return;
+
+      const students = shuffle(getStudents());
+      let output = "<strong>Groups:</strong><br>";
+
+      for (let i = 0; i < students.length; i += size) {
+        const group = students.slice(i, i + size);
+        output += `<div class="group"><strong>Group ${Math.floor(i / size) + 1}:</strong> ${group.join(", ")}</div>`;
+      }
+
+      document.getElementById("output").innerHTML = output;
+    }
+  </script>
+
+</body>
+</html>
